@@ -8,6 +8,12 @@ function createRandomPromise(id) {
 async function populateTable() {
     const output = document.getElementById('output');
 
+    // Add loading row
+    const loadingRow = document.createElement('tr');
+    loadingRow.id = 'loading';
+    loadingRow.innerHTML = '<td colspan="2">Loading...</td>';
+    output.appendChild(loadingRow);
+
     // Create and run promises
     const promises = [
         createRandomPromise(1),
@@ -17,6 +23,9 @@ async function populateTable() {
 
     // Wait for all promises to resolve
     const results = await Promise.all(promises);
+
+    // Remove loading row
+    output.removeChild(loadingRow);
 
     // Populate the table with results
     results.forEach(result => {
