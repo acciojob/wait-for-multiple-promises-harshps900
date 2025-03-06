@@ -4,44 +4,33 @@ function createRandomPromise(id) {
     return new Promise(resolve => setTimeout(() => resolve({ id, time }), time * 1000));
 }
 
-// Handle promises and update the table
-async function handlePromises() {
+// Populate the table with the results of the promises
+async function populateTable() {
     const output = document.getElementById('output');
-    const loading = document.getElementById('loading');
-    const resetBtn = document.getElementById('reset-btn');
 
-    output.innerHTML = '';
-    loading.style.display = 'block';
-    resetBtn.style.display = 'none';
-
+    // Create and run promises
     const promises = [
         createRandomPromise(1),
         createRandomPromise(2),
         createRandomPromise(3)
     ];
 
+    // Wait for all promises to resolve
     const results = await Promise.all(promises);
-    loading.style.display = 'none';
-    resetBtn.style.display = 'inline-block';
 
-    let maxTime = 0;
-
+    // Populate the table with results
     results.forEach(result => {
-        output.innerHTML += `<tr><td>Promise ${result.id}</td><td>${result.time} seconds</td></tr>`;
-        maxTime = Math.max(maxTime, parseFloat(result.time));
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>Promise ${result.id}</td><td>${result.time}</td>`;
+        output.appendChild(row);
     });
 
-    output.innerHTML += `<tr class="total-row"><td>Total</td><td>${maxTime.toFixed(3)} seconds</td></tr>`;
+    // Calculate and display total time
+    const totalTime = Math.max(...results.map(result => parseFloat(result.time)));
+    const totalRow = document.createElement('tr');
+    totalRow.innerHTML = `<td>Total</td><td>${totalTime.toFixed(3)}</td>`;
+    output.appendChild(totalRow);
 }
 
-// Reset the table
-function resetTable() {
-    document.getElementById('output').innerHTML = '';
-    document.getElementById('reset-btn').style.display = 'none';
-}
-
-// Attach event listeners
-document.getElementById('start-btn').addEventListener('click', handlePromises);
-document.getElementById('reset-btn').addEventListener('click', resetTable);
-
-// Let me know if you want more improvements or extra features! 🚀
+// Run the function when the page loads
+window.onload = populateTable;
